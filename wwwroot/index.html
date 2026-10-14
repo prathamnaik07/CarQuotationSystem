@@ -1,0 +1,704 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Quotation System</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f5f9;
+            color: #222;
+        }
+
+        header {
+            background: #172554;
+            color: white;
+            padding: 20px 7%;
+        }
+
+            header h1 {
+                margin: 0;
+            }
+
+            header p {
+                margin-bottom: 0;
+            }
+
+        nav {
+            background: white;
+            padding: 15px 7%;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid #ddd;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background: #1d4ed8;
+            }
+
+            button:disabled {
+                background: #9ca3af;
+                cursor: not-allowed;
+            }
+
+        input, select {
+            display: block;
+            width: 100%;
+            padding: 11px;
+            margin: 9px 0 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 25px auto;
+            padding: 0 16px;
+        }
+
+        .panel {
+            background: white;
+            padding: 22px;
+            margin-bottom: 22px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #0000000d;
+        }
+
+        h2 {
+            color: #172554;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 15px;
+        }
+
+        .car {
+            border: 1px solid #dbe3ef;
+            border-radius: 10px;
+            padding: 15px;
+            overflow-wrap: anywhere;
+            background: #fff;
+            box-shadow: 0 3px 10px #00000008;
+            transition: transform .2s, box-shadow .2s;
+        }
+
+            .car:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 20px #00000012;
+            }
+
+        .auth-hero {
+            min-height: 350px;
+            margin-bottom: 22px;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            border-radius: 10px;
+            color: white;
+            background: linear-gradient(90deg, #172554ed, #17255466, #17255412), url("https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1600&q=85") center 55% / cover no-repeat;
+        }
+
+            .auth-hero h2 {
+                margin: 0 0 8px;
+                color: white;
+                font-size: clamp(28px, 4vw, 42px);
+                max-width: 390px;
+            }
+
+            .auth-hero p {
+                margin: 0;
+                max-width: 420px;
+                font-size: 17px;
+                line-height: 1.6;
+            }
+
+        .car-image {
+            display: block;
+            width: 100%;
+            height: 210px;
+            margin-bottom: 12px;
+            border-radius: 6px;
+            object-fit: cover;
+            background: #e5e7eb;
+        }
+
+        .car h3 {
+            color: #172554;
+            margin: 7px 0;
+        }
+
+        .car p {
+            margin: 8px 0;
+        }
+
+        .car button {
+            width: 100%;
+            margin-top: 8px;
+            padding: 12px;
+            font-weight: bold;
+        }
+
+        .message {
+            margin-top: 12px;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        label {
+            display: block;
+        }
+
+        input[type="checkbox"] {
+            display: inline-block;
+            width: auto;
+            margin-right: 8px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .price {
+            color: #166534;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .auth-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 28px;
+        }
+
+            .auth-grid > div + div {
+                border-left: 1px solid #e5e7eb;
+                padding-left: 28px;
+            }
+
+        @media (max-width: 700px) {
+            .auth-hero {
+                min-height: 230px;
+                padding: 20px;
+            }
+
+            .auth-grid {
+                grid-template-columns: 1fr;
+            }
+
+                .auth-grid > div + div {
+                    border-left: 0;
+                    border-top: 1px solid #e5e7eb;
+                    padding-left: 0;
+                    padding-top: 18px;
+                }
+
+            .car-image {
+                height: 190px;
+            }
+
+            header, nav {
+                padding-left: 5%;
+                padding-right: 5%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Car Quotation System</h1>
+        <p>Find your car. Compare dealer quotations. Choose the best deal.</p>
+    </header>
+
+    <nav>
+        <button type="button" onclick="showSection('auth')">Login / Register</button>
+        <button type="button" onclick="showSection('dashboard')">Cars</button>
+        <button type="button" onclick="showSection('request')">Request Quotation</button>
+        <button type="button" onclick="showSection('quotes')">Compare Quotations</button>
+        <button type="button" onclick="logout()">Logout</button>
+    </nav>
+
+    <main>
+        <section id="auth" class="panel">
+            <div class="auth-hero">
+                <div>
+                    <h2>Find your next car</h2>
+                    <p>Sign in to compare dealer quotations and choose the right deal.</p>
+                </div>
+            </div>
+            <div class="auth-grid">
+                <div>
+                    <h2>Register</h2>
+                    <form id="registerForm">
+                        <input id="regName" placeholder="Full Name" autocomplete="name" required>
+                        <input id="regEmail" type="email" placeholder="Email" autocomplete="email" required>
+                        <input id="regMobile" type="tel" placeholder="Mobile Number" autocomplete="tel" required>
+                        <input id="regPassword" type="password" placeholder="Password" autocomplete="new-password" required>
+                        <button type="submit">Register</button>
+                    </form>
+                </div>
+                <div>
+                    <h2>Login</h2>
+                    <form id="loginForm">
+                        <input id="loginEmail" type="email" placeholder="Email" autocomplete="email" required>
+                        <input id="loginPassword" type="password" placeholder="Password" autocomplete="current-password" required>
+                        <button type="submit">Login</button>
+                    </form>
+                </div>
+            </div>
+            <p id="authMessage" class="message"></p>
+        </section>
+
+        <section id="dashboard" class="panel hidden">
+            <h2>Available Cars</h2>
+            <button type="button" onclick="loadCars()">Refresh Cars</button>
+            <div id="carList" class="grid"></div>
+            <p id="carMessage" class="message"></p>
+        </section>
+
+        <section id="request" class="panel hidden">
+            <h2>Request a Quotation</h2>
+            <form id="requestForm">
+                <label for="carSelect">Select Car</label>
+                <select id="carSelect" required><option value="">Loading cars...</option></select>
+                <label><input type="checkbox" id="wantsAccessories"> I want accessories</label>
+                <div id="accessoryOptions" class="hidden"></div>
+                <button type="submit">Submit Request</button>
+            </form>
+            <p id="requestMessage" class="message"></p>
+        </section>
+
+        <section id="quotes" class="panel hidden">
+            <h2>Compare Dealer Quotations</h2>
+            <label for="requestSelect">Select Purchase Request</label>
+            <select id="requestSelect"><option value="">Select a purchase request</option></select>
+            <button type="button" onclick="loadQuotes()">View Quotations</button>
+            <div id="quoteList" class="grid"></div>
+            <p id="quoteMessage" class="message"></p>
+        </section>
+    </main>
+    <footer>Car Quotation System | ASP.NET Core Web API</footer>
+
+    <script>
+                const API = "/api";
+                let currentUser = null;
+                let cars = [];
+                let accessories = [];
+                let requests = [];
+
+                // Model-specific images are selected by matching the car's brand/model.
+                // Replace these URLs with your own verified images if you need exact model photos.
+                const carImageMap = [
+                    {
+                        keywords: ["nexon"],
+                        url: "https://media.spinny.com/sp-file-system/public/2025-01-17/ce4c5ddd996046719f58b602b77ed1aa/file.JPG"
+                    },
+                    {
+                        keywords: ["creta"],
+                        url: "https://stimg.cardekho.com/images/carexteriorimages/630x420/Hyundai/Creta/8667/1755765115423/front-left-side-47.jpg?imwidth=420&impolicy=resize"
+                    },
+                    {
+                        keywords: ["swift"],
+                        url: "https://stimg.cardekho.com/images/car-images/large/Maruti/Swift/9226/1747045535143/227_Noval-Orange_bf4315.jpg"
+                    }
+                ];
+                const fallbackCarImage = "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=900&q=85";
+
+                function showSection(id) {
+                    document.querySelectorAll("main section").forEach(section => section.classList.add("hidden"));
+                    document.getElementById(id).classList.remove("hidden");
+                    if (id === "dashboard") loadCars();
+                    if (id === "request") loadRequestOptions();
+                    if (id === "quotes") loadRequests();
+                }
+
+                async function api(url, options = {}) {
+                    const response = await fetch(API + url, {
+                        ...options,
+                        headers: {
+                            ...(options.body ? { "Content-Type": "application/json" } : {}),
+                            ...(options.headers || {})
+                        }
+                    });
+                    const responseText = await response.text();
+                    if (!response.ok) {
+                        let message = responseText || `HTTP error ${response.status}`;
+                        try {
+                            const data = JSON.parse(responseText);
+                            if (data.errors) message = Object.values(data.errors).flat().join("\n");
+                            else message = data.message || data.title || responseText;
+                        } catch {}
+                        throw new Error(message);
+                    }
+                    if (!responseText) return null;
+                    try { return JSON.parse(responseText); }
+                    catch { return responseText; }
+                }
+
+                function showMessage(id, message) {
+                    document.getElementById(id).textContent = message;
+                }
+
+                function money(amount) {
+                    return "₹" + Number(amount || 0).toLocaleString("en-IN");
+                }
+
+                function createElement(tag, text) {
+                    const element = document.createElement(tag);
+                    element.textContent = text ?? "";
+                    return element;
+                }
+
+                function requireLogin() {
+                    if (currentUser) return true;
+                    showMessage("authMessage", "Please log in first.");
+                    showSection("auth");
+                    return false;
+                }
+
+                function fillCarOptions() {
+                    const select = document.getElementById("carSelect");
+                    const previousValue = select.value;
+                    select.replaceChildren();
+                    const placeholder = document.createElement("option");
+                    placeholder.value = "";
+                    placeholder.textContent = cars.length ? "Select a car" : "No cars available";
+                    placeholder.selected = true;
+                    select.appendChild(placeholder);
+                    cars.forEach(car => {
+                        const option = document.createElement("option");
+                        option.value = car.carId;
+                        option.textContent = `${car.brand} ${car.model} - ${car.variant} (${money(car.basePrice)})`;
+                        select.appendChild(option);
+                    });
+                    if (cars.some(car => String(car.carId) === previousValue)) select.value = previousValue;
+                }
+
+                function getCarImage(car) {
+                    const name = `${car.brand || ""} ${car.model || ""}`.toLowerCase();
+                    const match = carImageMap.find(item => item.keywords.some(keyword => name.includes(keyword)));
+                    // Prefer the image URL stored in the database, then the model mapping, then fallback.
+                    return car.imageUrl || car.image || car.imagePath || match?.url || fallbackCarImage;
+                }
+
+                function renderCars() {
+                    const container = document.getElementById("carList");
+                    container.replaceChildren();
+                    if (!cars.length) {
+                        container.textContent = "No cars available. Check the Cars table in your database.";
+                        return;
+                    }
+                    cars.forEach(car => {
+                        const card = document.createElement("div");
+                        card.className = "car";
+                        const image = document.createElement("img");
+                        image.className = "car-image";
+                        image.alt = `${car.brand || "Car"} ${car.model || ""}`.trim();
+                        image.loading = "lazy";
+                        image.src = getCarImage(car);
+                        image.onerror = () => {
+                            image.onerror = null;
+                            image.src = fallbackCarImage;
+                        };
+                        card.appendChild(image);
+                        card.append(
+                            createElement("h3", `${car.brand || ""} ${car.model || ""}`.trim()),
+                            createElement("p", `Variant: ${car.variant || "Not specified"}`)
+                        );
+                        const price = createElement("p", `Price: ${money(car.basePrice)}`);
+                        price.className = "price";
+                        card.appendChild(price);
+                        const button = createElement("button", "Choose Car");
+                        button.addEventListener("click", async () => {
+                            if (!requireLogin()) return;
+                            await loadRequestOptions();
+                            document.getElementById("carSelect").value = String(car.carId);
+                            showSection("request");
+                            document.getElementById("carSelect").value = String(car.carId);
+                        });
+                        card.appendChild(button);
+                        container.appendChild(card);
+                    });
+                }
+
+                document.getElementById("registerForm").addEventListener("submit", async event => {
+                    event.preventDefault();
+                    try {
+                        await api("/Auth/register", {
+                            method: "POST",
+                            body: JSON.stringify({
+                                fullName: document.getElementById("regName").value.trim(),
+                                email: document.getElementById("regEmail").value.trim(),
+                                mobileNumber: document.getElementById("regMobile").value.trim(),
+                                password: document.getElementById("regPassword").value
+                            })
+                        });
+                        showMessage("authMessage", "Registration successful. Please log in.");
+                        event.target.reset();
+                    } catch (error) {
+                        showMessage("authMessage", "Registration failed: " + error.message);
+                    }
+                });
+
+                document.getElementById("loginForm").addEventListener("submit", async event => {
+                    event.preventDefault();
+                    try {
+                        const result = await api("/Auth/login", {
+                            method: "POST",
+                            body: JSON.stringify({
+                                email: document.getElementById("loginEmail").value.trim(),
+                                password: document.getElementById("loginPassword").value
+                            })
+                        });
+                        if (!result || !result.userId) throw new Error("Login API did not return user details.");
+                        currentUser = { userId: result.userId, fullName: result.fullName, email: result.email };
+                        sessionStorage.setItem("currentUser", JSON.stringify(currentUser));
+                        showMessage("authMessage", "Welcome " + (currentUser.fullName || ""));
+                        event.target.reset();
+                        showSection("dashboard");
+                    } catch (error) {
+                        showMessage("authMessage", "Login failed: " + error.message);
+                    }
+                });
+
+                async function loadCars() {
+                    try {
+                        const data = await api("/Cars");
+                        cars = Array.isArray(data) ? data : [];
+                        renderCars();
+                        fillCarOptions();
+                        showMessage("carMessage", cars.length ? "" : "No cars returned by /api/Cars.");
+                    } catch (error) {
+                        showMessage("carMessage", "Could not load cars: " + error.message);
+                        showMessage("requestMessage", "Could not load cars: " + error.message);
+                    }
+                }
+
+                async function loadRequestOptions() {
+                    if (!requireLogin()) return;
+                    try {
+                        const carData = await api("/Cars");
+                        cars = Array.isArray(carData) ? carData : [];
+                        fillCarOptions();
+                        const accessoryData = await api("/Accessories");
+                        accessories = Array.isArray(accessoryData) ? accessoryData : [];
+                        const container = document.getElementById("accessoryOptions");
+                        container.replaceChildren();
+                        accessories.forEach(item => {
+                            const label = document.createElement("label");
+                            const checkbox = document.createElement("input");
+                            checkbox.type = "checkbox";
+                            checkbox.value = item.accessoryId;
+                            checkbox.className = "accessory-checkbox";
+                            label.appendChild(checkbox);
+                            label.append(` ${item.name} - ${money(item.price)}`);
+                            container.appendChild(label);
+                        });
+                        container.classList.toggle("hidden", !document.getElementById("wantsAccessories").checked);
+                        showMessage("requestMessage", cars.length ? "" : "No cars found. Add car records to the Cars table.");
+                    } catch (error) {
+                        showMessage("requestMessage", "Could not load options: " + error.message);
+                    }
+                }
+
+                document.getElementById("wantsAccessories").addEventListener("change", event => {
+                    const container = document.getElementById("accessoryOptions");
+                    container.classList.toggle("hidden", !event.target.checked);
+                    if (!event.target.checked) {
+                        document.querySelectorAll(".accessory-checkbox").forEach(item => { item.checked = false; });
+                    }
+                });
+
+                document.getElementById("requestForm").addEventListener("submit", async event => {
+                    event.preventDefault();
+                    if (!requireLogin()) return;
+                    const carId = Number(document.getElementById("carSelect").value);
+                    const wantsAccessories = document.getElementById("wantsAccessories").checked;
+                    const accessoryIds = wantsAccessories
+                        ? [...document.querySelectorAll(".accessory-checkbox:checked")].map(item => Number(item.value))
+                        : [];
+                    if (!carId) {
+                        showMessage("requestMessage", "Please select a car.");
+                        return;
+                    }
+                    try {
+                        const result = await api("/PurchaseRequest", {
+                            method: "POST",
+                            body: JSON.stringify({
+                                userId: Number(currentUser.userId),
+                                carId,
+                                wantsAccessories,
+                                accessoryIds
+                            })
+                        });
+                        showMessage("requestMessage",
+                            "Purchase request created successfully.\n" +
+                            "Request ID: " + (result.purchaseRequestId ?? "") + "\n" +
+                            "Car Price: " + money(result.carPrice) + "\n" +
+                            "Accessories: " + money(result.accessoryPrice) + "\n" +
+                            "Estimated Total: " + money(result.estimatedTotal));
+                        event.target.reset();
+                        document.getElementById("accessoryOptions").classList.add("hidden");
+                        await loadRequests();
+                    } catch (error) {
+                        showMessage("requestMessage", "Request failed: " + error.message);
+                    }
+                });
+
+                async function loadRequests() {
+                    if (!requireLogin()) return;
+                    try {
+                        const data = await api("/PurchaseRequest");
+                        requests = Array.isArray(data)
+                            ? data.filter(request => Number(request.userId) === Number(currentUser.userId))
+                            : [];
+                        const select = document.getElementById("requestSelect");
+                        const previousValue = select.value;
+                        select.replaceChildren();
+                        const placeholder = document.createElement("option");
+                        placeholder.value = "";
+                        placeholder.textContent = requests.length ? "Select a purchase request" : "No requests found";
+                        placeholder.selected = true;
+                        select.appendChild(placeholder);
+                        requests.forEach(request => {
+                            const option = document.createElement("option");
+                            option.value = request.purchaseRequestId;
+                            option.textContent = `Request #${request.purchaseRequestId}` +
+                                (request.carName ? ` - ${request.carName}` : "");
+                            select.appendChild(option);
+                        });
+                        if (requests.some(request => String(request.purchaseRequestId) === previousValue)) {
+                            select.value = previousValue;
+                        }
+                        document.getElementById("quoteList").replaceChildren();
+                        showMessage("quoteMessage", requests.length ? "" : "No requests found. Create a purchase request first.");
+                    } catch (error) {
+                        showMessage("quoteMessage", "Could not load requests: " + error.message);
+                    }
+                }
+
+                async function loadQuotes() {
+                    if (!requireLogin()) return;
+                    const requestId = Number(document.getElementById("requestSelect").value);
+                    const container = document.getElementById("quoteList");
+                    container.replaceChildren();
+                    if (!requestId) {
+                        showMessage("quoteMessage", "Please select a purchase request first.");
+                        return;
+                    }
+                    if (!requests.some(request => Number(request.purchaseRequestId) === requestId)) {
+                        showMessage("quoteMessage", "This purchase request is not available.");
+                        return;
+                    }
+                    try {
+                        showMessage("quoteMessage", "Loading quotations...");
+                        const data = await api(`/Quotation/purchase-request/${requestId}`);
+                        const quotes = Array.isArray(data) ? data : [];
+                        if (!quotes.length) {
+                            showMessage("quoteMessage", `No quotations found for Request #${requestId}. Please add a quotation for this purchase request.`);
+                            return;
+                        }
+                        quotes.forEach(quote => {
+                            const card = document.createElement("div");
+                            card.className = "car";
+                            card.append(
+                                createElement("h3", "Dealer #" + quote.dealerId),
+                                createElement("p", "Quotation ID: " + quote.quotationId),
+                                createElement("p", "Car Price: " + money(quote.carPrice)),
+                                createElement("p", "Accessories: " + money(quote.accessoryPrice)),
+                                createElement("p", "Discount: " + money(quote.discount)),
+                                createElement("p", "Insurance: " + money(quote.insurance)),
+                                createElement("p", "Tax: " + money(quote.tax))
+                            );
+                            const finalPrice = createElement("p", "Final Price: " + money(quote.finalPrice));
+                            finalPrice.className = "price";
+                            card.appendChild(finalPrice);
+                            card.append(
+                                createElement("p", "Status: " + (quote.status || "Pending")),
+                                createElement("p", "Valid Until: " + (quote.validUntil ? new Date(quote.validUntil).toLocaleDateString("en-IN") : "Not specified"))
+                            );
+                            const button = createElement("button", "Select & Purchase");
+                            button.addEventListener("click", () => buyQuote(quote));
+                            card.appendChild(button);
+                            container.appendChild(card);
+                        });
+                        showMessage("quoteMessage", "");
+                    } catch (error) {
+                        showMessage("quoteMessage", "Could not load quotations: " + error.message);
+                    }
+                }
+
+                async function buyQuote(quote) {
+                    if (!requireLogin()) return;
+                    if (!quote.quotationId || !quote.purchaseRequestId) {
+                        showMessage("quoteMessage", "Quotation ID or purchase request ID is missing.");
+                        return;
+                    }
+                    if (!confirm("Purchase this quotation for " + money(quote.finalPrice) + "?")) return;
+                    try {
+                        const query = new URLSearchParams({
+                            purchaseRequestId: String(quote.purchaseRequestId),
+                            quotationId: String(quote.quotationId),
+                            userId: String(currentUser.userId)
+                        });
+                        await api("/Purchase?" + query.toString(), { method: "POST" });
+                        showMessage("quoteMessage", "Purchase completed successfully.");
+                        await loadRequests();
+                        document.getElementById("requestSelect").value = String(quote.purchaseRequestId);
+                        await loadQuotes();
+                    } catch (error) {
+                        showMessage("quoteMessage", "Purchase failed: " + error.message);
+                    }
+                }
+
+                async function logout() {
+                    try {
+                        if (currentUser) await api("/Auth/logout", { method: "POST" });
+                    } catch (error) {
+                        console.error("Logout API error:", error);
+                    }
+                    currentUser = null;
+                    sessionStorage.removeItem("currentUser");
+                    document.getElementById("quoteList").replaceChildren();
+                    document.getElementById("carList").replaceChildren();
+                    showSection("auth");
+                    showMessage("authMessage", "Logged out.");
+                }
+
+                function restoreSession() {
+                    try {
+                        currentUser = JSON.parse(sessionStorage.getItem("currentUser") || "null");
+                    } catch {
+                        currentUser = null;
+                        sessionStorage.removeItem("currentUser");
+                    }
+                    if (currentUser) showMessage("authMessage", "Welcome back " + (currentUser.fullName || ""));
+                }
+
+                restoreSession();
+    </script>
+</body>
+</html>
